@@ -8,7 +8,13 @@
 
 class DataCollector : public myo::DeviceListener {
 public:
-    DataCollector() : current_pose_(), locked_(true), unlocked_at_(0), base_volume_(0), roll_(0), roll_prev_(0) {}
+    DataCollector() : arm_(), x_direction_(), current_pose_(), locked_(true), unlocked_at_(0), base_volume_(0), roll_(0), roll_prev_(0) {}
+
+    void onArmRecognized(myo::Myo* myo, uint64_t timestamp, myo::Arm arm, myo::XDirection x_direction)
+    {
+        arm_ = arm;
+        x_direction_ = x_direction;
+    }
 
     void onPose(myo::Myo* myo, uint64_t timestamp, myo::Pose pose)
     {
@@ -62,6 +68,8 @@ public:
     }
 
 private:
+    myo::Arm arm_;
+    myo::XDirection x_direction_;
     myo::Pose current_pose_;
     bool locked_;
     time_t unlocked_at_;
@@ -80,7 +88,13 @@ private:
     void updateVolume()
     {
         float roll_diff = roll_ - roll_prev_;
+        // Swap the rotation direction depending on the orientation of the Myo.
+        if (x_direction_ != myo::xDirectionTowardWrist) {
+            roll_diff *= -1;
+        }
         // Ensure that roll_diff is continuous from -pi/2 to +pi/2.
+        // Is there a better way to do this which allows infinite rotation
+        // instead of limiting it to -pi/2 to +pi/2?
         if (roll_diff > M_PI) {
             roll_diff -= (2 * M_PI);
         }
