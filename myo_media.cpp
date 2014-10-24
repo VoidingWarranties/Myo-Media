@@ -33,6 +33,16 @@ public:
                     throw std::runtime_error("Unable to pause / play VLC!");
                 }
                 extendUnlock();
+            } else if ((pose == myo::Pose::waveIn && arm_ == myo::armRight) ||
+                       (pose == myo::Pose::waveOut && arm_ == myo::armLeft)) {
+                // Wave left.
+                std::system("osascript -e 'tell application \"VLC\" to previous'");
+                extendUnlock();
+            } else if ((pose == myo::Pose::waveOut && arm_ == myo::armRight) ||
+                       (pose == myo::Pose::waveIn && arm_ == myo::armLeft)) {
+                // Wave right.
+                std::system("osascript -e 'tell application \"VLC\" to next'");
+                extendUnlock();
             } else if (pose == myo::Pose::fist && current_pose_ != myo::Pose::fist) {
                 std::cout << "Adjusting volume" << std::endl;
                 roll_prev_ = roll_;
@@ -44,6 +54,7 @@ public:
                 std::fgets(volume_cstr, 4, volume_p);
                 base_volume_ = std::atoi(volume_cstr);
                 pclose(volume_p);
+                extendUnlock();
             }
         }
         current_pose_ = pose;
