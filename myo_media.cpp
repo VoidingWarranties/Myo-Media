@@ -7,8 +7,14 @@
 #include <myo/myo.hpp>
 
 class DataCollector : public myo::DeviceListener {
+private:
+    enum class supported_apps_t {
+        NOTHING, // Reserved. Will not perform any media operations besides volume control.
+        VLC
+    };
+
 public:
-    DataCollector() : arm_(), x_direction_(), current_pose_(), locked_(true), unlocked_at_(0), base_volume_(0), roll_(0), roll_prev_(0) {}
+    DataCollector() : arm_(), x_direction_(), current_pose_(), current_app_(supported_apps_t::VLC), locked_(true), unlocked_at_(0), base_volume_(0), roll_(0), roll_prev_(0) {}
 
     void onArmRecognized(myo::Myo* myo, uint64_t timestamp, myo::Arm arm, myo::XDirection x_direction)
     {
@@ -28,21 +34,15 @@ public:
             }
         } else {
             if (pose == myo::Pose::fingersSpread) {
-                std::cout << "Toggling pause / play" << std::endl;
-                if (0 != std::system("osascript -e 'tell application \"VLC\" to play'")) {
-                    throw std::runtime_error("Unable to pause / play VLC!");
-                }
-                extendUnlock();
+                togglePlayPause();
             } else if ((pose == myo::Pose::waveIn && arm_ == myo::armRight) ||
                        (pose == myo::Pose::waveOut && arm_ == myo::armLeft)) {
                 // Wave left.
-                std::system("osascript -e 'tell application \"VLC\" to previous'");
-                extendUnlock();
+                prevSong();
             } else if ((pose == myo::Pose::waveOut && arm_ == myo::armRight) ||
                        (pose == myo::Pose::waveIn && arm_ == myo::armLeft)) {
                 // Wave right.
-                std::system("osascript -e 'tell application \"VLC\" to next'");
-                extendUnlock();
+                nextSong();
             } else if (pose == myo::Pose::fist && current_pose_ != myo::Pose::fist) {
                 std::cout << "Adjusting volume" << std::endl;
                 roll_prev_ = roll_;
@@ -82,6 +82,7 @@ private:
     myo::Arm arm_;
     myo::XDirection x_direction_;
     myo::Pose current_pose_;
+    supported_apps_t current_app_;
     bool locked_;
     time_t unlocked_at_;
     int base_volume_;
@@ -123,6 +124,42 @@ private:
                                  + std::to_string(new_volume) + "'";
         if (0 != std::system(volume_cmd.c_str())) {
             throw std::runtime_error("Unable to adjust volume!");
+        }
+    }
+    void togglePlayPause()
+    {
+        switch (current_app_) {
+            case supported_apps_t::VLC:
+                std::cout << "Toggling VLC pause / play" << std::endl;
+                if (0 != std::system("osascript -e 'tell application \"VLC\" to play'")) {
+                    throw std::runtime_error("Unable to pause / play VLC!");
+                }
+                extendUnlock();
+                break;
+        }
+    }
+    void nextSong()
+    {
+        switch (current_app_) {
+            case supported_apps_t::VLC:
+                std::cout << "Advancing VLC to the next track" << std::endl;
+                if (0 != std::system("osascript -e 'tell application \"VLC\" to next'")) {
+                    throw std::runtime_error("Unable to go to the next track in VLC!");
+                }
+                extendUnlock();
+                break;
+        }
+    }
+    void prevSong()
+    {
+        switch (current_app_) {
+            case supported_apps_t::VLC:
+                std::cout << "Advancing VLC to the previous track" << std::endl;
+                if (0 != std::system("osascript -e 'tell application \"VLC\" to previous'")) {
+                    throw std::runtime_error("Unable to go to the previous track in VLC!");
+                }
+                extendUnlock();
+                break;
         }
     }
 };
