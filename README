@@ -1,12 +1,11 @@
 Myo Media
 =========
+
 An OS X application which uses Myo as a general media controller
 ----------------------------------------------------------------
 
 The media controls which come packaged with the Myo only work when the app to be controlled is the active window. This is annoying as it forces you to use the mouse / keyboard to navigate to iTunes / VLC before using the Myo.
 
-This app should take advantage of OS X's media keys to control the music / volume even whilst iTunes / VLC is in the background.
+Myo Media solves this problem by allowing you to control your music or other media and volume even whilst the media player application is in the background. Myo Media goes beyond the capabilities of Apple's media keys which can only control native applications by allowing you to control web based media players as well. See [BeardedSpice](https://github.com/beardedspice/beardedspice) for similar functionality without the Myo.
 
-Unfortunately the media keys only work for apps such as iTunes and VLC. It would be cool if the app could also control YouTube or SoundCloud in a Chrome window. This could be done by overriding the function of the media keys and somehow allowing the user to switch between which application they intend on controlling. For example, the user could make a fist and then pull back their fist towards their body to activate a media control switcher which would allow the user to switch between which application they want to control with the Myo. This would not bring the app into the foreground, it would simply change which app receives the commands from the Myo. The user could rotate their fist to select which app they want to control. I imagine it would be similar in look to the alt-tab application switcher.
-
-The media control switcher could also control media at a finer grain level than the application level. For example in Chrome it could control it at the tab level. The application could figure out any tab that is a media tab and display that tab in the media control switcher. This would allow you to pause your SounCloud before playing a YouTube video without ever switching the tab you are viewing.
+The actively controlled application / web-tab can be controled by making a fist and pulling your hand straight back. While continuing to make a fist, you can rotate your fist to select from the different controllable open applications / tabs. This interface looks very similar to the alt-tab application switcher.
