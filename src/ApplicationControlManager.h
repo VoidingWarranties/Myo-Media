@@ -72,6 +72,38 @@ class ApplicationControlManager {
       std::cerr << "Unable to adjust system volume!" << std::endl;
   }
 
+  void stepForward() {
+    switch (selected_app_) {
+      case supported_apps_t::NOTHING:
+        break;
+      case supported_apps_t::VLC:
+        std::cout << "Stepping VLC forward" << std::endl;
+        if (0 !=
+            std::system("osascript -e 'tell application \"VLC\" to step forward'"))
+          throw std::runtime_error(
+              "Unable to step VLC forward!");
+        break;
+      case supported_apps_t::ITUNES:
+        break;
+    }
+  }
+
+  void stepBackward() {
+    switch (selected_app_) {
+      case supported_apps_t::NOTHING:
+        break;
+      case supported_apps_t::VLC:
+        std::cout << "Stepping VLC backward" << std::endl;
+        if (0 !=
+            std::system("osascript -e 'tell application \"VLC\" to step backward'"))
+          throw std::runtime_error(
+              "Unable to step VLC backward!");
+        break;
+      case supported_apps_t::ITUNES:
+        break;
+    }
+  }
+
  private:
   supported_apps_t selected_app_;
 };
