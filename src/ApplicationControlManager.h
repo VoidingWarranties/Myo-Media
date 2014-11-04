@@ -77,7 +77,6 @@ class ApplicationControlManager {
       case supported_apps_t::NOTHING:
         break;
       case supported_apps_t::VLC:
-        std::cout << "Stepping VLC forward" << std::endl;
         if (0 !=
             std::system("osascript -e 'tell application \"VLC\" to step forward'"))
           throw std::runtime_error(
@@ -93,7 +92,6 @@ class ApplicationControlManager {
       case supported_apps_t::NOTHING:
         break;
       case supported_apps_t::VLC:
-        std::cout << "Stepping VLC backward" << std::endl;
         if (0 !=
             std::system("osascript -e 'tell application \"VLC\" to step backward'"))
           throw std::runtime_error(
