@@ -24,6 +24,20 @@ class ApplicationControlManager {
           throw std::runtime_error("Unable to pause / play VLC!");
         break;
       case supported_apps_t::ITUNES:
+        std::cout << "Toggling iTunes pause / play" << std::endl;
+        if (0 != std::system(
+                     "osascript -e 'tell application \"iTunes\" to playpause'"))
+          throw std::runtime_error("Unable to pause / play iTunes!");
+        break;
+    }
+  }
+
+  void resume() const {
+    switch (selected_app_) {
+      case supported_apps_t::ITUNES:
+        if (0 !=
+            std::system("osascript -e 'tell application \"iTunes\" to resume'"))
+          throw std::runtime_error("Unable to play iTunes!");
         break;
     }
   }
@@ -38,6 +52,12 @@ class ApplicationControlManager {
           throw std::runtime_error("Unable to advance VLC to the next track!");
         break;
       case supported_apps_t::ITUNES:
+        std::cout << "Advancing iTunes to the next track" << std::endl;
+        if (0 !=
+            std::system(
+                "osascript -e 'tell application \"iTunes\" to next track'"))
+          throw std::runtime_error(
+              "Unable to advance iTunes to the next track!");
         break;
     }
   }
@@ -54,6 +74,12 @@ class ApplicationControlManager {
               "Unable to advance VLC to the previous track!");
         break;
       case supported_apps_t::ITUNES:
+        std::cout << "Advancing iTunes to the previous track" << std::endl;
+        if (0 !=
+            std::system(
+                "osascript -e 'tell application \"iTunes\" to previous track'"))
+          throw std::runtime_error(
+              "Unable to advance iTunes to the previous track!");
         break;
     }
   }
@@ -77,12 +103,15 @@ class ApplicationControlManager {
       case supported_apps_t::NOTHING:
         break;
       case supported_apps_t::VLC:
-        if (0 !=
-            std::system("osascript -e 'tell application \"VLC\" to step forward'"))
-          throw std::runtime_error(
-              "Unable to step VLC forward!");
+        if (0 != std::system(
+                     "osascript -e 'tell application \"VLC\" to step forward'"))
+          throw std::runtime_error("Unable to step VLC forward!");
         break;
       case supported_apps_t::ITUNES:
+        if (0 !=
+            std::system(
+                "osascript -e 'tell application \"iTunes\" to fast forward'"))
+          throw std::runtime_error("Unable to step iTunes forward!");
         break;
     }
   }
@@ -93,11 +122,14 @@ class ApplicationControlManager {
         break;
       case supported_apps_t::VLC:
         if (0 !=
-            std::system("osascript -e 'tell application \"VLC\" to step backward'"))
-          throw std::runtime_error(
-              "Unable to step VLC backward!");
+            std::system(
+                "osascript -e 'tell application \"VLC\" to step backward'"))
+          throw std::runtime_error("Unable to step VLC backward!");
         break;
       case supported_apps_t::ITUNES:
+        if (0 !=
+            std::system("osascript -e 'tell application \"iTunes\" to rewind'"))
+          throw std::runtime_error("Unable to step iTunes backward!");
         break;
     }
   }
